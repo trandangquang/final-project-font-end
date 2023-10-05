@@ -1,11 +1,33 @@
-import React from 'react'
-import registerImage from '../../assets/image/login.jpg';
 import { Button, Form, Input } from 'antd';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import registerImage from '../../assets/image/login.jpg';
 
-const RegisterPage = (props) => {
-  const { onFinish, isSubmitting } = props;
+const RegisterPage = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleOnChangeEmail = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+  };
+
+  const handleOnChangePassword = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+  };
+
+  const handleOnChangeConfirmPassword = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+  };
+
+  const handleOnClickLogin = () => {
+    setIsSubmitting(true)
+  }
   return (
     <div className='absolute w-full h-full flex items-center overflow-hidden'>
       <img className='relative object-cover' src={registerImage} alt='' />
@@ -19,9 +41,9 @@ const RegisterPage = (props) => {
             Nice to see you.
           </h3>
 
-          <Form name='register-form' onFinish={onFinish} autoComplete='off'>
+          <Form name='register-form' autoComplete='off'>
             <div className='flex flex-col gap-1'>
-              <span>Porsche ID (E-mail-Address)</span>
+              <span className='font-semibold'>Porsche ID (E-mail-Address)</span>
 
               <Form.Item
                 name='email'
@@ -40,12 +62,14 @@ const RegisterPage = (props) => {
                 <Input
                   className='placeholder:italic placeholder:text-slate-600 bg-white w-[400px] h-[50px] border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-lg'
                   placeholder='Email'
+                  value={email}
+                  onChange={handleOnChangeEmail}
                 />
               </Form.Item>
             </div>
 
             <div className='flex flex-col gap-1'>
-              <span>Password</span>
+              <span className='font-semibold'>Password</span>
 
               <Form.Item
                 name='password'
@@ -60,12 +84,14 @@ const RegisterPage = (props) => {
                 <Input.Password
                   placeholder='Password'
                   className='placeholder:italic placeholder:text-slate-600 bg-white w-[400px] h-[50px] border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-lg'
+                  value={password}
+                  onChange={handleOnChangePassword}
                 />
               </Form.Item>
             </div>
 
             <div className='flex flex-col gap-1'>
-              <span>Confirm Password</span>
+              <span className='font-semibold'>Confirm Password</span>
 
               <Form.Item
                 name='confirm'
@@ -76,23 +102,13 @@ const RegisterPage = (props) => {
                     required: true,
                     message: 'Please confirm your password!',
                   },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error(
-                          'The new password that you entered do not match!'
-                        )
-                      );
-                    },
-                  }),
                 ]}
               >
                 <Input.Password
                   placeholder='Confirm Password'
                   className='placeholder:italic placeholder:text-slate-600 bg-white w-[400px] h-[50px] border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-lg'
+                  value={confirmPassword}
+                  onChange={handleOnChangeConfirmPassword}
                 />
               </Form.Item>
             </div>
@@ -105,6 +121,7 @@ const RegisterPage = (props) => {
                 type='primary'
                 className='rounded-full text-white bg-black w-full h-[50px] sm:text-xl
                           hover:border-none hover:!text-white hover:!bg-black disabled:bg-slate-900 disabled:text-white disabled:border-none'
+                onClick={handleOnClickLogin}
               >
                 {isSubmitting ? 'Registering...' : 'Register now'}
               </Button>
@@ -123,4 +140,4 @@ const RegisterPage = (props) => {
   );
 };
 
-export default RegisterPage
+export default RegisterPage;

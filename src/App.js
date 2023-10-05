@@ -7,11 +7,6 @@ import { routes } from './routes';
 import { useQuery } from '@tanstack/react-query';
 
 function App() {
-
-  console.log(
-    'process.env.REACT_API_URL_BACKEND',
-    process.env.REACT_APP_API_URL
-  );
   const fetchApi = async () => {
     const res = await axios.get(
       `${process.env.REACT_APP_API_URL}/product/get-all`
@@ -19,8 +14,9 @@ function App() {
     return res.data
   };
 
-    const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi });
+    const query = useQuery({ queryKey: ['app'], queryFn: fetchApi });
     console.log('query', query)
+
 
   return (
     <div>
