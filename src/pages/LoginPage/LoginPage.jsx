@@ -1,13 +1,21 @@
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginImage from '../../assets/image/login.jpg';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import * as UserService from '../../services/UserService';
+import Loading from '../../components/LoadingComponent/Loading';
 
 const LoginPage = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+   const mutation = useMutationHooks(
+     data => UserService.loginUser(data),
+   );
+
+   const {data, isLoading} = mutation
 
   const handleOnChangeEmail = (e) => {
     const value = e.target.value;
@@ -19,8 +27,11 @@ const LoginPage = () => {
     setPassword(value);
   };
 
-  const handleOnClick = () => {
-    setIsSubmitting(true)
+  const handleLogin = () => {
+    mutation.mutate({
+      email,
+      password,
+    });
   };
   return (
     <div className='absolute w-full h-full flex items-center overflow-hidden'>
@@ -35,7 +46,7 @@ const LoginPage = () => {
             Nice to see you.
           </h3>
 
-          <Form name='login-form' autoComplete='off'>
+          <Form name='login-form' onFinish={handleLogin} autoComplete='off'>
             <div className='flex flex-col gap-1'>
               <span className='font-semibold'>Porsche ID (E-mail-Address)</span>
 
@@ -84,19 +95,22 @@ const LoginPage = () => {
               </Form.Item>
             </div>
 
-            <div className='flex justify-center mt-8'>
-              <Button
-                htmlType='submit'
-                disabled={isSubmitting}
-                loading={isSubmitting}
-                type='primary'
-                className='rounded-full text-white bg-black w-full h-[50px] sm:text-xl
+            {data?.status === 'ERR' && (
+              <span className='text-red-600'>{data?.message}</span>
+            )}
+            <Loading isLoading={isLoading}>
+              <div className='flex justify-center mt-8'>
+                <button
+                  disabled={isLoading}
+                  className='rounded-full text-white bg-black w-full h-[50px] sm:text-xl
                           hover:border-none hover:!text-white hover:!bg-black disabled:bg-slate-900 disabled:text-white disabled:border-none'
-                onClick={handleOnClick}
-              >
-                {isSubmitting ? 'Logging in...' : 'Log in now'}
-              </Button>
-            </div>
+                  onClick={handleLogin}
+                >
+                  {isLoading ? 'Logging in ...' : 'Log in now'}
+                </button>
+              </div>
+            </Loading>
+
             <div className='inline-flex items-center justify-center w-full'>
               <hr className='w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700' />
               <span className='absolute px-3 font-medium  -translate-x-1/2 bg-white left-1/2  '>

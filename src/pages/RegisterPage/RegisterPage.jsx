@@ -2,9 +2,11 @@ import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerImage from '../../assets/image/login.jpg';
+import Loading from '../../components/LoadingComponent/Loading';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import * as UserService from '../../services/UserService';
 
 const RegisterPage = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,9 +27,13 @@ const RegisterPage = () => {
     setConfirmPassword(value);
   };
 
-  const handleOnClickLogin = () => {
-    setIsSubmitting(true)
-  }
+  const mutation = useMutationHooks((data) => UserService.registerUser(data));
+
+  const { data, isLoading } = mutation;
+
+  const handleRegister = () => {
+    mutation.mutate({ email, password, confirmPassword });
+  };
   return (
     <div className='absolute w-full h-full flex items-center overflow-hidden'>
       <img className='relative object-cover' src={registerImage} alt='' />
@@ -112,27 +118,25 @@ const RegisterPage = () => {
                 />
               </Form.Item>
             </div>
-
-            <div className='flex flex-col justify-center items-center mt-8 gap-4'>
-              <Button
-                htmlType='submit'
-                disabled={isSubmitting}
-                loading={isSubmitting}
-                type='primary'
-                className='rounded-full text-white bg-black w-full h-[50px] sm:text-xl
+            {data?.status === 'ERR' && <span className='text-red-600'>{data?.message}</span>}
+            <Loading isLoading={isLoading}>
+              <div className='flex flex-col justify-center items-center mt-8 gap-4'>
+                <Button
+                  className='rounded-full text-white bg-black w-full h-[50px] sm:text-xl
                           hover:border-none hover:!text-white hover:!bg-black disabled:bg-slate-900 disabled:text-white disabled:border-none'
-                onClick={handleOnClickLogin}
-              >
-                {isSubmitting ? 'Registering...' : 'Register now'}
-              </Button>
+                  onClick={handleRegister}
+                >
+                  {isLoading ? 'Registering...' : 'Register now'}
+                </Button>
 
-              <p
-                className='underline underline-offset-2 mr-1 cursor-pointer'
-                onClick={() => navigate('/login')}
-              >
-                Back to Login page
-              </p>
-            </div>
+                <p
+                  className='underline underline-offset-2 mr-1 cursor-pointer'
+                  onClick={() => navigate('/login')}
+                >
+                  Back to Login page
+                </p>
+              </div>
+            </Loading>
           </Form>
         </div>
       </div>
