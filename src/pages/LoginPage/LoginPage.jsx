@@ -1,21 +1,41 @@
 import { Form, Input } from 'antd';
-import React, { useState } from 'react';
+import jwt_decode from 'jwt-decode';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginImage from '../../assets/image/login.jpg';
+import Loading from '../../components/LoadingComponent/Loading';
 import { useMutationHooks } from '../../hooks/useMutationHook';
 import * as UserService from '../../services/UserService';
-import Loading from '../../components/LoadingComponent/Loading';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../redux/slices/userSlice';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-   const mutation = useMutationHooks(
-     data => UserService.loginUser(data),
-   );
+  const mutation = useMutationHooks((data) => UserService.loginUser(data));
 
-   const {data, isLoading} = mutation
+  const { data, isLoading, isSuccess } = mutation;
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/');
+      localStorage.setItem('access_token', data?.access_token);
+      if (data?.access_token) {
+        const decoded = jwt_decode(data?.access_token);
+        console.log('decoded', decoded);
+        if (decoded?.id) {
+          handleGetDetailsUser(decoded?.id, data?.access_token);
+        }
+      }
+    }
+  }, [isSuccess]);
+
+  const handleGetDetailsUser = async (id, token) => {
+    const res = await UserService.getDetailsUser(id, token);
+    dispatch(updateUser({...res?.data, access_token: token}))
+  };
 
   const handleOnChangeEmail = (e) => {
     const value = e.target.value;

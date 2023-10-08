@@ -30,6 +30,7 @@ import porschebgboxster from '../../assets/image/porsche-bg.jpg';
 import styleedition from '../../assets/image/style-edition-718.png';
 import taycancross from '../../assets/image/taycan-cross.png';
 import taycan from '../../assets/image/taycan.png';
+import { useSelector } from 'react-redux';
 
 
 const items = [
@@ -398,6 +399,8 @@ const items = [
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
+  const user = useSelector((state)=> state.user)
+  console.log('user', user)
   return (
     <div>
       <>
@@ -442,14 +445,18 @@ const HeaderComponent = () => {
                 <UserOutlined className='hover:text-red-700' />
               </div>
 
-              <div className='text-lg flex-col flex'>
-                <span
-                  className='hover:text-red-700'
-                  onClick={() => navigate('/login')}
-                >
-                  Sign in / Register
-                </span>
-              </div>
+              {user?.name ? (
+                <div className='text-lg flex-col flex'>{user.name}</div>
+              ) : (
+                <div className='text-lg flex-col flex'>
+                  <span
+                    className='hover:text-red-700'
+                    onClick={() => navigate('/login')}
+                  >
+                    Sign in / Register
+                  </span>
+                </div>
+              )}
 
               <div className='pl-5 '>
                 <Badge count={4}>

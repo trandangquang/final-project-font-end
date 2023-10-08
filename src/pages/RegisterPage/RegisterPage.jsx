@@ -1,10 +1,11 @@
 import { Button, Form, Input } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registerImage from '../../assets/image/login.jpg';
 import Loading from '../../components/LoadingComponent/Loading';
 import { useMutationHooks } from '../../hooks/useMutationHook';
 import * as UserService from '../../services/UserService';
+import * as message from '../../components/MessageComponent/Message';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -29,7 +30,15 @@ const RegisterPage = () => {
 
   const mutation = useMutationHooks((data) => UserService.registerUser(data));
 
-  const { data, isLoading } = mutation;
+  const { data, isLoading, isSuccess, isError } = mutation;
+  useEffect(()=> {
+    if(isSuccess){
+      message.success()
+      navigate('/login')
+    }else if(isError){
+      message.error()
+    }
+  },[isSuccess, isError])
 
   const handleRegister = () => {
     mutation.mutate({ email, password, confirmPassword });
