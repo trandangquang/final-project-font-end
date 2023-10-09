@@ -4,6 +4,7 @@ import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductPage from "../pages/ProductPage/ProductPage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 
@@ -41,6 +42,11 @@ export const routes = [
   {
     path: '/details',
     page: ProductDetailPage,
+    isShowHeader: true,
+  },
+  {
+    path: '/profile',
+    page: ProfilePage,
     isShowHeader: true,
   },
   {

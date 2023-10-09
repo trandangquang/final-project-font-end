@@ -1,7 +1,7 @@
-
-import {ShoppingCartOutlined, UserOutlined} from '@ant-design/icons'
+import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { Badge, Divider, Dropdown, Popover, Select } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import caymanbg from '../../assets/image/718caymanbg.jpg';
 import sport from '../../assets/image/911-sport.png';
@@ -30,11 +30,9 @@ import porschebgboxster from '../../assets/image/porsche-bg.jpg';
 import styleedition from '../../assets/image/style-edition-718.png';
 import taycancross from '../../assets/image/taycan-cross.png';
 import taycan from '../../assets/image/taycan.png';
-import { useDispatch, useSelector } from 'react-redux';
-import * as UserService from '../../services/UserService'
 import { resetUser } from '../../redux/slices/userSlice';
+import * as UserService from '../../services/UserService';
 import Loading from '../LoadingComponent/Loading';
-
 
 const items = [
   {
@@ -402,26 +400,39 @@ const items = [
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
-  const user = useSelector((state)=> state.user)
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
-
+  const [loading, setLoading] = useState(false);
+  const [userName, setUserName] = useState('');
+  const dispatch = useDispatch();
+  // const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state);
 
   const handleLogout = async () => {
-    setLoading(true)
-    await UserService.logoutUser()
+    setLoading(true);
+    await UserService.logoutUser();
     dispatch(resetUser());
-    setLoading(false)
-  }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    setUserName(user?.name);
+    setLoading(false);
+  }, [user]);
+
   const content = (
     <div>
-      <p className='hover:text-red-700 cursor-pointer'>User information</p>
+      <p
+        className='hover:text-red-700 cursor-pointer'
+        onClick={() => navigate('/profile')}
+      >
+        User information
+      </p>
       <p className='hover:text-red-700 cursor-pointer' onClick={handleLogout}>
         Logout
       </p>
     </div>
   );
-  console.log('user', user)
+  console.log('user', user);
   return (
     <div>
       <>
@@ -466,10 +477,12 @@ const HeaderComponent = () => {
                 <UserOutlined className='hover:text-red-700' />
               </div>
               <Loading isLoading={loading}>
-                {user?.name ? (
+                {user?.access_token ? (
                   <>
                     <Popover content={content} trigger='click'>
-                      <div className='text-lg flex-col flex'>{user.name}</div>
+                      <div className='text-lg flex-col flex'>
+                        {userName?.length ? userName : user?.email}
+                      </div>
                     </Popover>
                   </>
                 ) : (
