@@ -402,9 +402,10 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
   const dispatch = useDispatch();
-  // const user = useSelector((state) => state.user);
-  const { user } = useSelector((state) => state);
+  const user = useSelector((state) => state.user);
+  // const { user } = useSelector((state) => state);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -416,8 +417,9 @@ const HeaderComponent = () => {
   useEffect(() => {
     setLoading(true);
     setUserName(user?.name);
+    setUserAvatar(user?.avatar);
     setLoading(false);
-  }, [user]);
+  }, [user?.name, user?.avatar]);
 
   const content = (
     <div>
@@ -473,9 +475,19 @@ const HeaderComponent = () => {
             />
 
             <div className='flex items-center gap-3 text-3xl cursor-pointer'>
-              <div>
-                <UserOutlined className='hover:text-red-700' />
-              </div>
+              {userAvatar ? (
+                <div className='rounded-full h-[30px] w-[30px]'>
+                  <img
+                    src={userAvatar}
+                    alt='avatar'
+                    className='object-cover h-[30px] w-[30px] rounded-full'
+                  />
+                </div>
+              ) : (
+                <div>
+                  <UserOutlined className='hover:text-red-700' />
+                </div>
+              )}
               <Loading isLoading={loading}>
                 {user?.access_token ? (
                   <>
